@@ -1,6 +1,8 @@
 # A list of subreddits you wish to download
-subreddit = [""]
-# Set Reddit sort example: "new", Empty will default to popular
-sort = ""
-# Set how many posts to scan per reddit
-postLimit = 10
+subreddit = ["wallpapers"]
+# Set Reddit sort example: "top", Empty will default to popular
+sortType = ""
+# Add arguments for the selected sort type example for top: "sort=top&t=all". Note not all sort types have arguments
+sortArg = ""
+# Set how many posts to download per subreddit
+downLimit = 50
