@@ -42,14 +42,14 @@ def extractImageUrl(jsonFile):
             ret[cleantitle] = url
     return ret
 
-def downloadImg(urls,category):
+def downloadImg(urls, category, downLimit):
     global downloadCount
     global errorCount
     saveDir = mkSaveDir(category)
     for key, value in urls.items():
         extentionLocation = value.rfind(".")
         fileName = (saveDir + key + value[extentionLocation: extentionLocation + 4]).encode("utf-8")
-        if (not os.path.exists(fileName)) and (downloadCount < config.downLimit):
+        if (not os.path.exists(fileName)) and (downloadCount < downLimit):
             downloadCount += 1
             try:
                 urllib.request.urlretrieve(value, fileName)
@@ -79,7 +79,7 @@ def runDownloader():
             url = genRedditUrl(item, config.sortType, config.sortArg, after)
             jsonFile = getJson(url)
             imgDict = extractImageUrl(jsonFile)
-            downloadImg(imgDict,item)
+            downloadImg(imgDict, item, config.downLimit)
             after = jsonFile["data"]["after"]
         print("--------------------------------------------------")
         print("Done downloading " + item + " Error Count: " + str(errorCount))
