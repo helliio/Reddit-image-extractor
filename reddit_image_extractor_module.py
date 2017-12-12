@@ -40,7 +40,7 @@ def run_reddit_downloader():
                 url = gen_reddit_url(subreddit, config.sort_type, config.sort_arg, after)
                 json_file = functions_module.get_json(url)
                 img_dict = extract_reddit_image_url(json_file)
-                functions_module.download_img(img_dict, subreddit, config.down_limit)
+                functions_module.download_img(img_dict, "reddit/" + subreddit, config.down_limit)
                 after = json_file["data"]["after"]
             print("--------------------------------------------------")
             print("Done downloading " + subreddit + " Error Count: " + str(functions_module.error_count))

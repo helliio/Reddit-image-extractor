@@ -7,7 +7,7 @@ download_count = 0
 error_count = 0
 
 def get_json(url):
-    header={"User-agent": "Image-extractor 1.2.0"}
+    header={"User-agent": "Image-extractor 1.2.1"}
     req = urllib.request.Request(url=url, headers=header)
     try:
         response = urllib.request.urlopen(req)
@@ -19,10 +19,10 @@ def get_json(url):
         data = json.loads(response.read().decode("utf-8"))
         return data
 
-def download_img(urls, category, down_limit):
+def download_img(urls, path, down_limit):
     global download_count
     global error_count
-    save_dir = mk_save_dir(category)
+    save_dir = mk_save_dir(path)
     for key, value in urls.items():
         extention_location = value.rfind(".")
         file_name = (save_dir + key + value[extention_location: extention_location + 4]).encode("utf-8")
