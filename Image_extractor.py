@@ -5,19 +5,19 @@ import os
 import time
 import config
 
-downloadCount = 0
-errorCount = 0
+download_count = 0
+error_count = 0
 
-def genRedditUrl(subreddit, sortType, sortArg, after):
-    if sortType != "":
-        sortType = "/" + sortType
-    if sortArg != "":
-        sortArg = "&" + sortArg
-    url = "https://www.reddit.com/r/" + subreddit + sortType + "/.json?limit=100" + sortArg + "&after=" + after
+def gen_reddit_url(subreddit, sort_type, sort_arg, after):
+    if sort_type != "":
+        sort_type = "/" + sort_type
+    if sort_arg != "":
+        sort_arg = "&" + sort_arg
+    url = "https://www.reddit.com/r/" + subreddit + sort_type + "/.json?limit=100" + sort_arg + "&after=" + after
     return url
 
-def getJson(url):
-    header={"User-agent": "Image-extractor 1.1"}
+def get_json(url):
+    header={"User-agent": "Image-extractor 1.1.1"}
     req = urllib.request.Request(url=url, headers=header)
     try:
         response = urllib.request.urlopen(req)
@@ -29,66 +29,69 @@ def getJson(url):
         data = json.loads(response.read().decode("utf-8"))
         return data
 
-def extractImageUrl(jsonFile):
+def extract_reddit_image_url(json_file):
     ret = {}
-    posts = jsonFile["data"]["children"]
+    posts = json_file["data"]["children"]
     for element in posts:
         url = element["data"]["url"]
         title = element["data"]["title"]
         asciistr = title.encode("ascii", errors="ignore").decode()
         unclean = str(asciistr)
-        cleantitle = unclean.translate(str.maketrans(" ","_","/.\\?#:;*<>\"'|"))
-        if (".jpg" in url or ".jpeg" in url or ".png" in url or ".gif" in url) and (not ".gifv" in url and not ".mp4" in url):
-            ret[cleantitle] = url
+        clean_title = unclean.translate(str.maketrans(" ","_","/.\\?#:;*<>\"'|"))
+        if (".jpg" in url or ".jpeg" in url or ".png" in url or ".gif" in url):
+            if (not ".gifv" in url and not ".mp4" in url):
+                ret[clean_title] = url
     return ret
 
-def downloadImg(urls, category, downLimit):
-    global downloadCount
-    global errorCount
-    saveDir = mkSaveDir(category)
+def download_img(urls, category, down_limit):
+    global download_count
+    global error_count
+    save_dir = mk_save_dir(category)
     for key, value in urls.items():
-        extentionLocation = value.rfind(".")
-        fileName = (saveDir + key + value[extentionLocation: extentionLocation + 4]).encode("utf-8")
-        if (not os.path.exists(fileName)) and (downloadCount < downLimit):
-            downloadCount += 1
+        extention_location = value.rfind(".")
+        file_name = (save_dir + key + value[extention_location: extention_location + 4]).encode("utf-8")
+        if (not os.path.exists(file_name)) and (download_count < down_limit):
+            download_count += 1
             try:
-                urllib.request.urlretrieve(value, fileName)
-                print("Saving img no." + str(downloadCount)+ ": " + fileName.decode("utf-8") + "\n")
+                urllib.request.urlretrieve(value, file_name)
+                print("Saving img no." + str(download_count)+ ": " + file_name.decode("utf-8") + "\n")
             except urllib.error.HTTPError as e:
-                print("Img no." + str(downloadCount) + " HTTPError: "+ str(e.code) + "\n")
-                errorCount += 1
+                print("HTTPError: "+ str(e.code) + "\n")
+                error_count += 1
+                download_count -= 1
             except urllib.error.URLError as e:
-                print("Img no." + str(downloadCount) + " URLError: "+ str(e.reason) + "\n")
-                errorCount += 1
+                print("URLError: "+ str(e.reason) + "\n")
+                error_count += 1
+                download_count -= 1
             
-def mkSaveDir(dir):
+def mk_save_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
     return dir + "/"
 
-def runDownloader():
-    for item in config.subreddit:
-        global downloadCount
-        global errorCount
+def run_reddit_downloader():
+    for subreddit in config.subreddit:
+        global download_count
+        global error_count
         print("--------------------------------------------------")
-        print("Starting downloads for: " + item)
+        print("Starting downloads for: " + subreddit)
         print("--------------------------------------------------" + "\n")
         after = ""
-        while downloadCount < config.downLimit and after != None:
+        while download_count < config.down_limit and after != None:
             time.sleep(3)
-            url = genRedditUrl(item, config.sortType, config.sortArg, after)
-            jsonFile = getJson(url)
-            imgDict = extractImageUrl(jsonFile)
-            downloadImg(imgDict, item, config.downLimit)
-            after = jsonFile["data"]["after"]
+            url = gen_reddit_url(subreddit, config.sort_type, config.sort_arg, after)
+            json_file = get_json(url)
+            img_dict = extract_reddit_image_url(json_file)
+            download_img(img_dict, subreddit, config.down_limit)
+            after = json_file["data"]["after"]
         print("--------------------------------------------------")
-        print("Done downloading " + item + " Error Count: " + str(errorCount))
+        print("Done downloading " + subreddit + " Error Count: " + str(error_count))
         print("--------------------------------------------------" + "\n")
-        downloadCount = 0
-        errorCount = 0
+        download_count = 0
+        error_count = 0
 
 def main():
-    runDownloader()
+    run_reddit_downloader()
 
 if __name__ == "__main__":
     main()
