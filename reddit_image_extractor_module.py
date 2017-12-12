@@ -1,5 +1,6 @@
 import time
 import functions_module
+import menu_module
 import config
 
 def gen_reddit_url(subreddit, sort_type, sort_arg, after):
@@ -25,20 +26,24 @@ def extract_reddit_image_url(json_file):
     return ret
 
 def run_reddit_downloader():
-    for subreddit in config.subreddit:
-        functions_module.download_count = 0
-        functions_module.error_count = 0
-        print("--------------------------------------------------")
-        print("Starting downloads for: " + subreddit)
-        print("--------------------------------------------------" + "\n")
-        after = ""
-        while functions_module.download_count < config.down_limit and after != None:
-            time.sleep(3)
-            url = gen_reddit_url(subreddit, config.sort_type, config.sort_arg, after)
-            json_file = functions_module.get_json(url)
-            img_dict = extract_reddit_image_url(json_file)
-            functions_module.download_img(img_dict, subreddit, config.down_limit)
-            after = json_file["data"]["after"]
-        print("--------------------------------------------------")
-        print("Done downloading " + subreddit + " Error Count: " + str(functions_module.error_count))
-        print("--------------------------------------------------" + "\n")
+    menu_module.ini_menu()
+    if config.subreddit:
+        for subreddit in config.subreddit:
+            functions_module.download_count = 0
+            functions_module.error_count = 0
+            print("--------------------------------------------------")
+            print("Starting downloads for: " + subreddit)
+            print("--------------------------------------------------" + "\n")
+            after = ""
+            while functions_module.download_count < config.down_limit and after != None:
+                time.sleep(3)
+                url = gen_reddit_url(subreddit, config.sort_type, config.sort_arg, after)
+                json_file = functions_module.get_json(url)
+                img_dict = extract_reddit_image_url(json_file)
+                functions_module.download_img(img_dict, subreddit, config.down_limit)
+                after = json_file["data"]["after"]
+            print("--------------------------------------------------")
+            print("Done downloading " + subreddit + " Error Count: " + str(functions_module.error_count))
+            print("--------------------------------------------------" + "\n")
+    else:
+        print("no subreddit entered")
