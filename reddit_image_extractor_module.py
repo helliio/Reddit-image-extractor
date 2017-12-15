@@ -1,6 +1,7 @@
 import time
 import http_module
 import menu_module
+import url_to_file_module
 import config
 
 def gen_reddit_url(subreddit, sort_type, sort_arg, after):
@@ -36,6 +37,7 @@ def run_reddit_downloader():
             print("--------------------------------------------------" + "\n")
             after = ""
             elapsed_time = 4
+            total_dict = {}
             while http_module.download_count < config.down_limit and after != None:
                 start_time = time.time()
                 if elapsed_time < 4:
@@ -46,6 +48,8 @@ def run_reddit_downloader():
                 http_module.download_img(img_dict, "reddit/" + subreddit, config.down_limit)
                 after = json_file["data"]["after"]
                 elapsed_time = time.time() - start_time
+                total_dict.update(img_dict)
+            url_to_file_module.write_dict(subreddit, "reddit/url/" + subreddit, total_dict)
             print("--------------------------------------------------")
             print("Done downloading " + subreddit + " Error Count: " + str(http_module.error_count))
             print("--------------------------------------------------" + "\n")
