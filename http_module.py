@@ -7,7 +7,7 @@ download_count = 0
 error_count = 0
 
 def get_json(url):
-    header={"User-agent": "Image-extractor 1.2.1"}
+    header={"User-agent": "Image-extractor 1.2.2"}
     req = urllib.request.Request(url=url, headers=header)
     try:
         response = urllib.request.urlopen(req)

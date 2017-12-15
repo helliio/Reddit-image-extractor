@@ -1,5 +1,5 @@
 import time
-import functions_module
+import http_module
 import menu_module
 import config
 
@@ -26,24 +26,29 @@ def extract_reddit_image_url(json_file):
     return ret
 
 def run_reddit_downloader():
-    menu_module.ini_menu()
+    menu_module.run_menu()
     if config.subreddit:
         for subreddit in config.subreddit:
-            functions_module.download_count = 0
-            functions_module.error_count = 0
+            http_module.download_count = 0
+            http_module.error_count = 0
             print("--------------------------------------------------")
             print("Starting downloads for: " + subreddit)
             print("--------------------------------------------------" + "\n")
             after = ""
-            while functions_module.download_count < config.down_limit and after != None:
-                time.sleep(3)
+            elapsed_time = 4
+            while http_module.download_count < config.down_limit and after != None:
+                start_time = time.time()
+                if elapsed_time < 4:
+                    time.sleep(4)
                 url = gen_reddit_url(subreddit, config.sort_type, config.sort_arg, after)
-                json_file = functions_module.get_json(url)
+                json_file = http_module.get_json(url)
                 img_dict = extract_reddit_image_url(json_file)
-                functions_module.download_img(img_dict, "reddit/" + subreddit, config.down_limit)
+                http_module.download_img(img_dict, "reddit/" + subreddit, config.down_limit)
                 after = json_file["data"]["after"]
+                elapsed_time = time.time() - start_time
+                print(elapsed_time)
             print("--------------------------------------------------")
-            print("Done downloading " + subreddit + " Error Count: " + str(functions_module.error_count))
+            print("Done downloading " + subreddit + " Error Count: " + str(http_module.error_count))
             print("--------------------------------------------------" + "\n")
     else:
         print("no subreddit entered")

@@ -1,8 +1,8 @@
 import config
 
-def ini_menu():
+def run_menu():
     print("--------------------------------------------------")
-    print("Welcome to Reddit image extractor version 1.2.0")
+    print("Welcome to Reddit image extractor version 1.2.2")
     print("--------------------------------------------------" + "\n")
     prompt_subreddits()
     prompt_sort_type()
