@@ -46,7 +46,6 @@ def run_reddit_downloader():
                 http_module.download_img(img_dict, "reddit/" + subreddit, config.down_limit)
                 after = json_file["data"]["after"]
                 elapsed_time = time.time() - start_time
-                print(elapsed_time)
             print("--------------------------------------------------")
             print("Done downloading " + subreddit + " Error Count: " + str(http_module.error_count))
             print("--------------------------------------------------" + "\n")
