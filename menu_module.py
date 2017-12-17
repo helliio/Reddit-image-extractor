@@ -143,7 +143,7 @@ def prompt_down_limit():
         if config.down_limit <= 0:
             edit_down_limit()
             break
-        print("You have set: " + str(config.down_limit) + "As your default, do you wish to change it? [y/N]" + "\n")
+        print("You have set: " + str(config.down_limit) + " As your default, do you wish to change it? [y/N]" + "\n")
         change_down_limit_input = input().lower()
         print("")
         if change_down_limit_input == "" or change_down_limit_input == "n":
