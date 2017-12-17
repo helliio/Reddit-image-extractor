@@ -2,7 +2,7 @@ import config
 
 def run_menu():
     print("--------------------------------------------------")
-    print("Welcome to Reddit image extractor version 1.2.3")
+    print("Welcome to Reddit image extractor version 1.2.4")
     print("--------------------------------------------------" + "\n")
     prompt_subreddits()
     prompt_sort_type()
